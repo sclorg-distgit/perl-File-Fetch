@@ -1,16 +1,16 @@
 %{?scl:%scl_package perl-File-Fetch}
 
 Name:           %{?scl_prefix}perl-File-Fetch
-Version:        0.48
-Release:        367%{?dist}
+Version:        0.52
+Release:        1%{?dist}
 Summary:        Generic file fetching mechanism
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/File-Fetch/
 Source0:        http://www.cpan.org/authors/id/B/BI/BINGOS/File-Fetch-%{version}.tar.gz
-# Avoid loading optional modules from default . (CVE-2016-1238)
-Patch0:         File-Fetch-0.48-CVE-2016-1238-avoid-loading-optional-modules-from.patch
 BuildArch:      noarch
+BuildRequires:  findutils
+BuildRequires:  make
 BuildRequires:  %{?scl_prefix}perl
 BuildRequires:  %{?scl_prefix}perl-generators
 BuildRequires:  %{?scl_prefix}perl(ExtUtils::MakeMaker)
@@ -28,21 +28,21 @@ BuildRequires:  %{?scl_prefix}perl(File::Temp)
 BuildRequires:  %{?scl_prefix}perl(FileHandle)
 BuildRequires:  %{?scl_prefix}perl(IPC::Cmd) >= 0.42
 BuildRequires:  %{?scl_prefix}perl(Locale::Maketext::Simple)
-BuildRequires:  %{?scl_prefix}perl(Module::Load::Conditional) >= 0.04
+BuildRequires:  %{?scl_prefix}perl(Module::Load::Conditional) >= 0.66
 BuildRequires:  %{?scl_prefix}perl(Params::Check) >= 0.07
 BuildRequires:  %{?scl_prefix}perl(vars)
 # Keep all downaloaders optional (LWP, curl, rsync etc.).
 # Tests:
 BuildRequires:  %{?scl_prefix}perl(Data::Dumper)
-BuildRequires:  %{?scl_prefix}perl(lib)
 BuildRequires:  %{?scl_prefix}perl(IO::Socket::INET)
+BuildRequires:  %{?scl_prefix}perl(lib)
 BuildRequires:  %{?scl_prefix}perl(Test::More)
 BuildRequires:  %{?scl_prefix}perl(warnings)
 Requires:       %{?scl_prefix}perl(:MODULE_COMPAT_%(%{?scl:scl enable %{scl} '}eval "$(perl -V:version)";echo $version%{?scl:'}))
 Requires:       %{?scl_prefix}perl(File::Spec) >= 0.82
 Requires:       %{?scl_prefix}perl(IPC::Cmd) >= 0.42
 Requires:       %{?scl_prefix}perl(Locale::Maketext::Simple)
-Requires:       %{?scl_prefix}perl(Module::Load::Conditional) >= 0.04
+Requires:       %{?scl_prefix}perl(Module::Load::Conditional) >= 0.66
 Requires:       %{?scl_prefix}perl(Params::Check) >= 0.07
 
 # Remove under-specified dependencies
@@ -65,14 +65,13 @@ File::Fetch allows you to fetch any file pointed to by a "ftp", "http",
 
 %prep
 %setup -q -n File-Fetch-%{version}
-%patch0 -p1
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor && make %{?_smp_mflags}%{?scl:'}
 
 %install
 %{?scl:scl enable %{scl} '}make pure_install DESTDIR=$RPM_BUILD_ROOT%{?scl:'}
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
+find $RPM_BUILD_ROOT -type f -name .packlist -delete
 %{_fixperms} $RPM_BUILD_ROOT/*
 
 %check
@@ -84,6 +83,9 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
 %{_mandir}/man3/*
 
 %changelog
+* Mon Aug 22 2016 Jitka Plesnikova <jplesnik@redhat.com> - 0.52-1
+- 0.52 bump
+
 * Tue Aug 02 2016 Jitka Plesnikova <jplesnik@redhat.com> - 0.48-367
 - Avoid loading optional modules from default . (CVE-2016-1238)
 
