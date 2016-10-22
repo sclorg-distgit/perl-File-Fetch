@@ -2,12 +2,14 @@
 
 Name:           %{?scl_prefix}perl-File-Fetch
 Version:        0.48
-Release:        366%{?dist}
+Release:        367%{?dist}
 Summary:        Generic file fetching mechanism
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/File-Fetch/
 Source0:        http://www.cpan.org/authors/id/B/BI/BINGOS/File-Fetch-%{version}.tar.gz
+# Avoid loading optional modules from default . (CVE-2016-1238)
+Patch0:         File-Fetch-0.48-CVE-2016-1238-avoid-loading-optional-modules-from.patch
 BuildArch:      noarch
 BuildRequires:  %{?scl_prefix}perl
 BuildRequires:  %{?scl_prefix}perl-generators
@@ -63,6 +65,7 @@ File::Fetch allows you to fetch any file pointed to by a "ftp", "http",
 
 %prep
 %setup -q -n File-Fetch-%{version}
+%patch0 -p1
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor && make %{?_smp_mflags}%{?scl:'}
@@ -81,6 +84,9 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
 %{_mandir}/man3/*
 
 %changelog
+* Tue Aug 02 2016 Jitka Plesnikova <jplesnik@redhat.com> - 0.48-367
+- Avoid loading optional modules from default . (CVE-2016-1238)
+
 * Mon Jul 11 2016 Petr Pisar <ppisar@redhat.com> - 0.48-366
 - SCL
 
